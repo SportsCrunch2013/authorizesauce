@@ -168,3 +168,11 @@ class CustomerAPI(object):
         response = self._make_call('CreateCustomerProfileTransaction',
             transaction, self.transaction_options)
         return parse_response(response.directResponse)
+    
+    def get_profile(self, profile_id):
+        transaction = self.client.factory.create('GetCustomerProfile')
+        transaction.customerProfileId = profile_id
+        response = self._make_call('GetCustomerProfile',
+            transaction, self.transaction_options)        
+        return response.profile[2]
+        

@@ -84,6 +84,9 @@ class AuthorizeClient(object):
         instance you can then use to udpate or cancel the payments.
         """
         return AuthorizeRecurring(self, uid)
+    
+    def get_profile(self, uid):
+        return AuthorizeCustomerProfile(self, uid)
 
 class AuthorizeCreditCard(object):
     """
@@ -402,3 +405,14 @@ class AuthorizeRecurring(object):
         Cancels any future charges from this recurring payment.
         """
         self._client._recurring.delete_subscription(self.uid)
+        
+class AuthorizeCustomerProfile(object):
+    def __init__(self, client, uid):
+        self._client = client
+        self.uid = uid
+        self._profile_id, self._payment_id = uid.split('|')
+        
+    def get(self):
+        return self._client._customer.get_profile(self._profile_id)
+    
+    
