@@ -47,7 +47,7 @@ class RecurringAPI(object):
 
     def create_subscription(self, credit_card, amount, start,
             days=None, months=None, occurrences=None, trial_amount=None,
-            trial_occurrences=None):
+            trial_occurrences=None, extra={}):
         """
         Creates a recurring subscription payment on the CreditCard provided.
         
@@ -85,6 +85,12 @@ class RecurringAPI(object):
             subscription, provide the number of occurences the trial period
             should last for. (Either both trial arguments should be provided,
             or neither.)
+            
+        ``extra``
+            If you want to add additional information to the subscription,
+            specifiy it within a dictionary where the key is the element and the
+            value is the populated  WSDL structure.
+            See :ref:`subscription_details` for the specifics
         """
         subscription = self.client.factory.create('ARBSubscriptionType')
 
@@ -104,6 +110,8 @@ class RecurringAPI(object):
                 'and last name to be provided with the credit card.')
         subscription.billTo.firstName = credit_card.first_name
         subscription.billTo.lastName = credit_card.last_name
+        
+        
 
         # Add the fields for the payment schedule
         if (days and months) or not (days or months):
@@ -146,6 +154,9 @@ class RecurringAPI(object):
         elif trial_amount or trial_occurrences:
             raise AuthorizeInvalidError('To indicate a trial period, you '
                 'must provide both a trial amount and occurrences.')
+
+        for key, item in extra.iteritems():
+            setattr(subscription,key,item)
 
         # Make the API call to create the subscription
         response = self._make_call('ARBCreateSubscription', subscription)
@@ -217,3 +228,13 @@ class RecurringAPI(object):
             call for the subscription you want to delete.
         """
         self._make_call('ARBCancelSubscription', subscription_id)
+
+    def create_details(self, structure):
+        """
+        Creates the WSDL structure that can be used as additional detail for the subscription
+        
+        ``structure`
+            The WSDL structure name. See :ref:`subscription_details`
+        """
+        
+        return self.client.factory.create(structure)

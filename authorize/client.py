@@ -146,7 +146,7 @@ class AuthorizeCreditCard(object):
         return self._client.saved_card(uid)
 
     def recurring(self, amount, start, days=None, months=None,
-            occurrences=None, trial_amount=None, trial_occurrences=None):
+            occurrences=None, trial_amount=None, trial_occurrences=None, extra={}):
         """
         Creates a recurring payment with this credit card. Pass in the
         following arguments to set it up:
@@ -177,6 +177,13 @@ class AuthorizeCreditCard(object):
         ``trial_occurrences`` *(optional)*
             If you want to charge a lower amount for an introductory period,
             specify the number of occurrences that period should last.
+            
+        ``extra`` *(optional)*
+            If you want to add additional information to the subscription,
+            specifiy it within a dictionary where the key is the element and the
+            value is the populated WSDL structure.
+            See :ref:`subscription_details` for the specifics
+            
 
         Returns an
         :class:`AuthorizeRecurring <authorize.client.AuthorizeRecurring>`
@@ -185,8 +192,20 @@ class AuthorizeCreditCard(object):
         uid = self._client._recurring.create_subscription(
             self.credit_card, amount, start, days=days, months=months,
             occurrences=occurrences, trial_amount=trial_amount,
-            trial_occurrences=trial_occurrences)
+            trial_occurrences=trial_occurrences, extra=extra)
         return self._client.recurring(uid)
+    
+    def create_details(self, structure):
+        """
+        TODO : expand so it works for the other interfaces
+        Creates a recurring payment with this credit card. Pass in the
+        following arguments to set it up:
+        
+        ``structure``
+          The name of the Authorize structure you want to create
+        """        
+        
+        return self._client._recurring.create_details(structure)
 
 class AuthorizeTransaction(object):
     """
@@ -367,6 +386,12 @@ class AuthorizeRecurring(object):
             specify the number of occurrences that period should last. You may
             specify this option only if there have not yet been any non-trial
             payments.
+            
+        ``extra`` *(optional)*
+            TODO: If you want to add additional information to the subscription,
+            specifiy it within a dictionary where the key is the element and the
+            value is the populated WSDL structure.
+            See :ref:`subscription_details` for the specifics
         """
         self._client._recurring.update_subscription(self.uid,
             amount=amount, start=start, occurrences=occurrences,

@@ -27,8 +27,13 @@ Saved card
 .. autoclass:: authorize.client.AuthorizeSavedCard
     :members: auth, capture, credit, delete
 
+
+
+.. _recuring_charge:
+
 Recurring charge
 ----------------
+
 
 .. autoclass:: authorize.client.AuthorizeRecurring
     :members: update, delete

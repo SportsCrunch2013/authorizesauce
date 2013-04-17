@@ -55,4 +55,5 @@ Contents
    data
    client
    exceptions
+   optional
    development
